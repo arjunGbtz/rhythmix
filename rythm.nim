@@ -12,11 +12,19 @@ when isMainModule:
 
     case args[0].toLowerAscii():
     of "list":
+        #helper that does stuff
+        proc PlaylistSuffix(name: string): string =
+            if name.endsWith("_playlist"):
+                result = name[0 .. ^("_playlist".len + 1)]
+            else:
+                result = name
+        #da real code
         if args.len == 1:
             var playlists: seq[string] = @[]
             for kind, path in walkDir("."):
-                if kind == pcDir and not path.extractFilename().startsWith("."):
-                    playlists.add(path.extractFilename())
+                let fname = path.extractFilename()
+                if kind == pcDir and not fname.startsWith(".") and fname.endsWith("_playlist"):
+                    playlists.add(PlaylistSuffix(fname))
             if playlists.len == 0:
                 echo "No playlists found."
             else:
@@ -35,7 +43,7 @@ when isMainModule:
             if songs.len == 0:
                 echo "No songs found in playlist."
             else:
-                echo "Songs in playlist \"", playlist, "\":"
+                echo "Songs in playlist \"", args[2], "\":"
                 for i, song in songs:
                     echo $(i+1), ". ", song
         else:
