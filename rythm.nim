@@ -9,7 +9,7 @@ when isMainModule:
     if args.len == 0:
             echo "No command given"
             quit(1)
-            
+
     case args[0].toLowerAscii():
     of "list":
         if args.len == 1:
@@ -24,7 +24,7 @@ when isMainModule:
                 for i, pl in playlists:
                     echo $(i+1), ". ", pl
         elif args.len == 3 and args[1] == "-s":
-            let playlist = args[2]
+            let playlist = args[2] & "_playlist"
             if not dirExists(playlist):
                 echo "Playlist does not exist: ", playlist
                 quit(1)
@@ -44,42 +44,45 @@ when isMainModule:
             echo "    list -s <playlist>  # Show songs in playlist"
             quit(1)
 
-    of "delete" of "del":
-            if args.len == 2:
-                let playlist = args[1]
-                if not dirExists(playlist):
-                    echo "Playlist does not exist: ", playlist
-                    quit(1)
-                if not removeDir(playlist):
-                    echo "Failed to delete playlist: ", playlist
-                    quit(1)
-                echo "Deleted playlist: ", playlist
-            elif args.len == 4 and args[2] == "-s":
-                let playlist = args[1]
-                let songName = args[3]
-                if not dirExists(playlist):
-                    echo "Playlist does not exist: ", playlist
-                    quit(1)
-                let songPath = playlist / songName
-                if not fileExists(songPath):
-                    echo "Song does not exist in playlist: ", songName
-                    quit(1)
-                if not removeFile(songPath):
-                    echo "Failed to delete song: ", songName
-                    quit(1)
-                echo "Deleted song: ", songName, " from playlist: ", playlist
-
-            else:
-                echo "Usage:"
-                echo "    delete <playlist_name>                 # Delete a playlist"
-                echo "    delete <playlist_name> -s <song_name>  # Delete a song from a playlist"
+    of "delete", "del":
+        if args.len == 2:
+            let playlist = args[1] & "_playlist"
+            if not dirExists(playlist):
+                echo "Playlist does not exist: ", playlist
                 quit(1)
+            try:
+                removeDir(playlist)
+                echo "Deleted playlist: ", playlist
+            except OSError:
+                echo "Failed to delete playlist: ", playlist
+                quit(1)
+        elif args.len == 4 and args[2] == "-s":
+            let playlist = args[1]
+            let songName = args[3]
+            if not dirExists(playlist):
+                echo "Playlist does not exist: ", playlist
+                quit(1)
+            let songPath = playlist / songName
+            if not fileExists(songPath):
+                echo "Song does not exist in playlist: ", songName
+                quit(1)
+            try:
+                removeFile(songPath)
+                echo "Deleted song: ", songName, " from playlist: ", playlist
+            except OSError:
+                echo "Failed to delete song: ", songName
+                quit(1)
+        else:
+            echo "Usage:"
+            echo "    delete <playlist_name>                 # Delete a playlist"
+            echo "    delete <playlist_name> -s <song_name>  # Delete a song from a playlist"
+            quit(1)
 
     of "new":
         if args.len < 2:
             echo "Usage: new <playlist_name>"
             quit(1)
-        let playlistName = args[1]
+        let playlistName = args[1] & "_playlist"
         if dirExists(playlistName):
             echo "Playlist already exists: ", playlistName
             quit(1)
@@ -97,7 +100,7 @@ when isMainModule:
             echo "Usage: add <url> <playlist_name>"
             quit(1)
         let url = args[1]
-        let playlist = args[2]
+        let playlist = args[2] & "_playlist"
         if not dirExists(playlist):
             echo "Playlist folder does not exist: ", playlist
             echo "Create a playlist with: new <playlist_name>"
@@ -110,7 +113,7 @@ when isMainModule:
         if args.len < 2:
             echo "Usage: playlist <playlist_name>"
             quit(1)
-        let playlist = args[1]
+        let playlist = args[1] & "_playlist"
         if not dirExists(playlist):
             echo "Playlist does not exist: ", playlist
             quit(1)
@@ -134,7 +137,7 @@ when isMainModule:
         if args.len < 3:
             echo "Usage: shuffel <playlist_name>"
             quit(1)
-        let playlist = args[1]
+        let playlist = args[1] & "_playlist"
 
     else:
         echo "Unknown command: ", args[0]
