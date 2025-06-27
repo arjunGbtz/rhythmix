@@ -1,4 +1,4 @@
-Rythm – Simple Command Line Music Playlist Manager
+##Rythm – Simple Command Line Music Playlist Manager
 
 Rythm is a minimal command-line tool to organize, manage, and play your local music playlists.
 It was created out of personal need for a fast, no-nonsense way to handle music folders and playlists from the terminal.
@@ -16,7 +16,7 @@ Features
 
   - Simple folder-based structure, no database needed
 
-Why?
+##Why?
 
 I built this tool because I wanted a quick and easy way to manage my music playlists locally, without heavy music players or complex GUIs.
 Maybe you find it useful too!
