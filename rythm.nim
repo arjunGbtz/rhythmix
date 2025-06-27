@@ -138,7 +138,7 @@ when isMainModule:
         songs.sort()
 
         for song in songs:
-            echo "▶️  ", song.extractFilename()
+            echo "playing  ", song.extractFilename()
             discard execShellCmd("mpv --no-video \"" & song & "\"")
 
     of "shuffel":
