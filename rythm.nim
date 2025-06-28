@@ -1,4 +1,4 @@
-import os, osproc, strutils, terminal, algorithm, sequtils
+import os, strutils, algorithm, random
 # Rythm - A simple command line music playlist manager
 
 when isMainModule:
@@ -119,7 +119,7 @@ when isMainModule:
 
     of "playlist":
         if args.len < 2:
-            echo "Usage: playlist <playlist_name>"
+            echo "Usage: playlist <playlist_name> [--shuffle]"
             quit(1)
         let playlist = args[1] & "_playlist"
         if not dirExists(playlist):
@@ -135,17 +135,15 @@ when isMainModule:
             echo "No songs found in playlist"
             quit(1)
 
-        songs.sort()
+        let shuffleMode = args.len > 2 and args[2] == "--shuffle"
+        if shuffleMode:
+            songs.shuffle()
+        else:
+            songs.sort()
 
         for song in songs:
             echo "playing  ", song.extractFilename()
             discard execShellCmd("mpv --no-video \"" & song & "\"")
-
-    of "shuffel":
-        if args.len < 3:
-            echo "Usage: shuffel <playlist_name>"
-            quit(1)
-        let playlist = args[1] & "_playlist"
 
     else:
         echo "Unknown command: ", args[0]
