@@ -1,4 +1,5 @@
-import os, strutils, algorithm, random
+import os, strutils, algorithm, random, sequtils
+import rythmTui
 # Rythm - A simple command line music playlist manager
 
 when isMainModule:
@@ -11,6 +12,8 @@ when isMainModule:
             quit(1)
 
     case args[0].toLowerAscii():
+    of "tui", "Tui", "TUI":
+        rythmTui()
     of "list":
         #helper that does stuff
         proc PlaylistSuffix(name: string): string =
