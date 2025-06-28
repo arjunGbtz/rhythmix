@@ -15,7 +15,7 @@ proc getPlaylists(): seq[string] =
     for kind, path in walkDir("."):
         let name = path.extractFilename()
         if kind == pcDir and name.endsWith("_playlist"):
-            result.add(name[0..^"_playlist".len - 1])
+            result.add(name[0 ..< name.len - "_playlist".len])
     result.sort()
     return result
 
@@ -45,10 +45,11 @@ proc playinNewTerm(pl: string; shuffle: bool) =
         "rythm playlist \"" & pl & "\""
 
     when defined(macosx):
-        let script = "osascript -e 'tell application \"Terminal\" to do script \"" & command & "\"'"
+        let escapedCmd = command.replace("\"", "\\\"")
+        let script = "osascript -e 'tell application \"Terminal\" to do script \"" & escapedCmd & "\"'"
         discard execShellCmd(script)
     elif defined(linux):
-        let cmd = "gnome-terminal -- bash -c '" & command & "; echo Press Enter to close; read'"
+        let cmd = "gnome-terminal -- bash -c \"" & command & "; echo Press Enter to close; read\""
         discard execShellCmd(cmd)
     elif defined(windows):
         let cmd = "start cmd /k " & command
