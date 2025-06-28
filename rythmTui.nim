@@ -32,8 +32,8 @@ proc selectPlaylist(playlists: seq[string]): string =
             echo ""
         echo "\n↑↓ to navigate | Enter = select | q = quit"
         case readKey():
-        of 'A': idx = (idx - 1 + playlists.len) mod playlists.len  # Up
-        of 'B': idx = (idx + 1) mod playlists.len                  # Down
+        of 'A': idx = (idx - 1 + playlists.len) mod playlists.len   # Up
+        of 'B': idx = (idx + 1) mod playlists.len                   # Down
         of '\n': return playlists[idx]
         of 'q': quit(0)
         else: discard
@@ -84,7 +84,14 @@ proc playlistMenu(pl: string) =
         else:
             discard
 
+proc resizeTerminal(cols = 100, rows = 40) =
+    when defined(windows):
+        discard execShellCmd("mode con: cols=" & $cols & " lines=" & $rows)
+    elif defined(macosx) or defined(linux):
+        stdout.write "\e[8;", $rows, ";", $cols, "t"
+
 proc rythmTui*() =
+    resizeTerminal(49, 10)
     while true:
         let playlists = getPlaylists()
         if playlists.len == 0:
